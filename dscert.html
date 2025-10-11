@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ilm Nexus Certificate Verification</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --nexus-blue: #0066FF;
+            --growth-green: #00C389;
+            --knowledge-yellow: #FFD43B;
+            --slate-gray: #2C3E50;
+            --light-gray: #f8f9fa;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--light-gray) 0%, #e6f2ff 100%);
+            min-height: 100vh;
+            color: var(--slate-gray);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(to right, var(--nexus-blue), var(--growth-green));
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            padding: 15px 0;
+            background: rgba(0, 102, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo span {
+            color: var(--knowledge-yellow);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--knowledge-yellow);
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--knowledge-yellow);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 180px 0 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M1200 120L0 16.48 0 0 1200 0 1200 120z" fill="%23ffffff"/></svg>');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+
+        .hero h2 {
+            font-size: 3.2rem;
+            margin-bottom: 20px;
+            color: var(--slate-gray);
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: var(--slate-gray);
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -2;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        .shape-1 {
+            top: 10%;
+            left: 10%;
+            width: 100px;
+            height: 100px;
+            background: var(--nexus-blue);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            top: 60%;
+            right: 10%;
+            width: 150px;
+            height: 150px;
+            background: var(--growth-green);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation-delay: 2s;
+        }
+
+        .shape-3 {
+            bottom: 20%;
+            left: 5%;
+            width: 80px;
+            height: 80px;
+            background: var(--knowledge-yellow);
+            border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%;
+            animation-delay: 4s;
+        }
+
+        /* Verification Section */
+        .verification-section {
+            background-color: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+            margin-bottom: 60px;
+            animation: fadeIn 1s ease;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .verification-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .verification-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--nexus-blue), var(--growth-green), var(--knowledge-yellow));
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--slate-gray);
+            font-size: 1.8rem;
+        }
+
+        .verification-form {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--slate-gray);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5ee;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--nexus-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+            outline: none;
+        }
+
+        .verify-btn {
+            background: linear-gradient(to right, var(--nexus-blue), var(--growth-green));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 102, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .verify-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: 0.5s;
+        }
+
+        .verify-btn:hover::before {
+            left: 100%;
+        }
+
+        .verify-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 102, 255, 0.3);
+        }
+
+        .verify-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* Result Section */
+        .result-section {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .result-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid var(--growth-green);
+            transition: transform 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: scale(1.02);
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .result-icon {
+            font-size: 2rem;
+            color: var(--growth-green);
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--slate-gray);
+        }
+
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .detail-item {
+            margin-bottom: 10px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--slate-gray);
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: var(--slate-gray);
+            opacity: 0.9;
+        }
+
+        .download-btn {
+            background: linear-gradient(to right, var(--knowledge-yellow), #e6b800);
+            color: var(--slate-gray);
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(255, 212, 59, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.5s ease 0.3s forwards;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 212, 59, 0.4);
+        }
+
+        .download-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .error-card {
+            border-left: 5px solid #e74c3c;
+        }
+
+        .error-icon {
+            color: #e74c3c;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            margin: 20px auto;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--nexus-blue);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        /* Certificate Preview */
+        .certificate-preview {
+            display: none;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .certificate-image {
+            max-width: 100%;
+            border: 1px solid #e1e5ee;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Carousel Section */
+        .carousel-section {
+            margin: 60px 0;
+            position: relative;
+        }
+
+        .carousel-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--slate-gray);
+            font-size: 1.8rem;
+        }
+
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            height: 400px;
+        }
+
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 100%;
+        }
+
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            color: white;
+            text-align: center;
+        }
+
+        .carousel-item:nth-child(1) {
+            background: linear-gradient(135deg, var(--nexus-blue), #0047b3);
+        }
+
+        .carousel-item:nth-child(2) {
+            background: linear-gradient(135deg, var(--growth-green), #009970);
+        }
+
+        .carousel-item:nth-child(3) {
+            background: linear-gradient(135deg, var(--knowledge-yellow), #e6b800);
+        }
+
+        .carousel-content {
+            max-width: 600px;
+        }
+
+        .carousel-content h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .carousel-content p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .carousel-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-btn:hover {
+            background-color: white;
+            color: var(--slate-gray);
+        }
+
+        .carousel-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background-color: white;
+            transform: scale(1.2);
+        }
+
+        /* Features Section */
+        .features-section {
+            margin: 80px 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, var(--nexus-blue), var(--growth-green));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--nexus-blue);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2);
+        }
+
+        .feature-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--slate-gray);
+        }
+
+        .feature-description {
+            color: var(--slate-gray);
+            opacity: 0.8;
+        }
+
+        /* Social Media Section */
+        .social-section {
+            background: linear-gradient(135deg, var(--slate-gray), #1a2530);
+            padding: 80px 0;
+            color: white;
+            text-align: center;
+        }
+
+        .social-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .social-title {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        .social-description {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .social-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-10px);
+        }
+
+        .social-icon i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover i {
+            transform: scale(1.2);
+        }
+
+        .social-icon.linkedin i {
+            color: #0077b5;
+        }
+
+        .social-icon.instagram i {
+            color: #e4405f;
+        }
+
+        .social-icon.twitter i {
+            color: #1da1f2;
+        }
+
+        .social-icon.facebook i {
+            color: #1877f2;
+        }
+
+        .social-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Review Section */
+        .review-section {
+            padding: 80px 0;
+            background-color: var(--white);
+        }
+
+        .review-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .review-title {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: var(--slate-gray);
+        }
+
+        .review-description {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: var(--slate-gray);
+            opacity: 0.9;
+        }
+
+        .review-btn {
+            display: inline-block;
+            background: linear-gradient(to right, var(--nexus-blue), var(--growth-green));
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 102, 255, 0.2);
+        }
+
+        .review-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 102, 255, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--slate-gray);
+            color: white;
+            padding: 60px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .footer-logo span {
+            color: var(--knowledge-yellow);
+        }
+
+        .footer-description {
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .footer-heading {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-heading::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--growth-green);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+            color: var(--knowledge-yellow);
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+        }
+
+        .footer-motto {
+            font-style: italic;
+            color: var(--knowledge-yellow);
+            margin-top: 10px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .hero h2 {
+                font-size: 2.8rem;
+            }
+            
+            .social-icons {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            nav ul {
+                gap: 15px;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero {
+                padding: 150px 0 80px;
+            }
+
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .verification-section {
+                padding: 30px 20px;
+            }
+
+            .carousel-item {
+                padding: 30px 20px;
+            }
+
+            .carousel-content h3 {
+                font-size: 1.6rem;
+            }
+
+            .carousel-content p {
+                font-size: 1rem;
+            }
+
+            .social-title {
+                font-size: 1.8rem;
+            }
+
+            .social-description {
+                font-size: 1rem;
+            }
+
+            .review-title {
+                font-size: 1.8rem;
+            }
+
+            .review-description {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .result-details {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .social-icons {
+                gap: 15px;
+            }
+
+            .social-icon i {
+                font-size: 2rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h1>Ilm <span>Nexus</span></h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="#">Verify</a></li>
+                        <li><a href="#">Courses</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </nav>
+                <button class="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+        </div>
+        <div class="container">
+            <h2 data-aos="fade-up">Ilm Nexus Certificate Verification Portal</h2>
+            <p data-aos="fade-up" data-aos-delay="200">Verify the authenticity of any Ilm Nexus Digital Skills Bootcamp Certificate. Enter the Certificate ID or Matric Number below to confirm validity.</p>
+        </div>
+    </section>
+
+    <!-- Verification Section -->
+    <section class="verification-section" data-aos="fade-up">
+        <div class="container">
+            <h2 class="section-title">Verify Certificate</h2>
+            <div class="verification-form">
+                <div class="input-group">
+                    <label for="certificateId">Certificate ID or Matric Number</label>
+                    <input type="text" id="certificateId" placeholder="e.g. CERT-2025-ILM-001 or ILM/25/GRA/018">
+                </div>
+                <button class="verify-btn" id="verifyBtn">Verify Certificate</button>
+                
+                <!-- Result Section -->
+                <div class="result-section" id="resultSection">
+                    <div class="result-card" id="resultCard">
+                        <div class="result-header">
+                            <div class="result-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <h3 class="result-title">Verified Certificate</h3>
+                        </div>
+                        <div class="result-details" id="resultDetails">
+                            <!-- Details will be populated by JavaScript -->
+                        </div>
+                        <button class="download-btn" id="downloadBtn">
+                            <i class="fas fa-download"></i> Download Certificate
+                        </button>
+                    </div>
+                    <div class="spinner" id="loadingSpinner"></div>
+                    <div class="certificate-preview" id="certificatePreview">
+                        <h4>Certificate Preview</h4>
+                        <img id="certificateImage" class="certificate-image" alt="Certificate Preview">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Carousel Section -->
+    <section class="carousel-section">
+        <div class="container">
+            <h2 class="carousel-title" data-aos="fade-up">Why Choose Ilm Nexus?</h2>
+            <div class="carousel" data-aos="fade-up">
+                <div class="carousel-inner" id="carouselInner">
+                    <div class="carousel-item">
+                        <div class="carousel-content">
+                            <h3>Industry-Relevant Skills</h3>
+                            <p>Our bootcamps are designed with industry experts to ensure you learn the most in-demand skills for today's job market.</p>
+                            <button class="carousel-btn">Explore Courses</button>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="carousel-content">
+                            <h3>Expert Instructors</h3>
+                            <p>Learn from professionals with years of experience in their fields and a passion for teaching.</p>
+                            <button class="carousel-btn">Meet Our Team</button>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="carousel-content">
+                            <h3>Career Support</h3>
+                            <p>Get career guidance, portfolio reviews, and job placement assistance to launch your new career.</p>
+                            <button class="carousel-btn">Success Stories</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-controls">
+                    <div class="carousel-dot active" data-index="0"></div>
+                    <div class="carousel-dot" data-index="1"></div>
+                    <div class="carousel-dot" data-index="2"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Our Verification Features</h2>
+            <div class="features-grid">
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Secure & Reliable</h3>
+                    <p class="feature-description">Our verification system uses advanced security measures to ensure certificate authenticity.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="feature-title">Instant Verification</h3>
+                    <p class="feature-description">Get immediate results when verifying certificates with our streamlined process.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <h3 class="feature-title">QR Code Integration</h3>
+                    <p class="feature-description">Each certificate comes with a unique QR code for quick scanning and verification.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Media Section -->
+    <section class="social-section" data-aos="fade-up">
+        <div class="container">
+            <div class="social-content">
+                <h2 class="social-title">Follow Us On Social Media</h2>
+                <p class="social-description">Stay updated with our latest courses, success stories, and industry insights</p>
+                <div class="social-icons">
+                    <a href="https://www.linkedin.com/company/107778808/admin/dashboard/" class="social-icon linkedin" target="_blank">
+                        <i class="fab fa-linkedin"></i>
+                        <span class="social-label">LinkedIn</span>
+                    </a>
+                    <a href="https://www.instagram.com/ilm_nexus/" class="social-icon instagram" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                        <span class="social-label">Instagram</span>
+                    </a>
+                    <a href="https://x.com/ilm_Nexus" class="social-icon twitter" target="_blank">
+                        <i class="fab fa-twitter"></i>
+                        <span class="social-label">Twitter</span>
+                    </a>
+                    <a href="https://www.facebook.com/profile.php?id=61558258106893" class="social-icon facebook" target="_blank">
+                        <i class="fab fa-facebook"></i>
+                        <span class="social-label">Facebook</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Review Section -->
+    <section class="review-section" data-aos="fade-up">
+        <div class="container">
+            <div class="review-content">
+                <h2 class="review-title">Share Your Experience</h2>
+                <p class="review-description">Help others discover Ilm Nexus by leaving a review on Google Maps</p>
+                <a href="https://www.google.com/maps/place/ILM-NEXUS/@8.4871909,4.6082016,17z/data=!3m1!4b1!4m6!3m5!1s0x10364d7095d2cd67:0x61e8183d7f378973!8m2!3d8.4871909!4d4.6082016!16s%2Fg%2F11zjh9mgpv?entry=ttu&g_ep=EgoyMDI1MTAwMS4wIKXMDSoASAFQAw%3D%3D" class="review-btn" target="_blank">
+                    Leave a Review on Google Maps
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-about">
+                    <div class="footer-logo">Ilm <span>Nexus</span></div>
+                    <p class="footer-description">The Ilm Nexus Certificate Verification Portal allows individuals, organizations, and employers to confirm the authenticity of certificates issued by Ilm Nexus Digital Skills Bootcamp.</p>
+                </div>
+                <div class="footer-links-container">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Verify Certificate</a></li>
+                        <li><a href="#">Our Courses</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4 class="footer-heading">Contact Us</h4>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope"></i> verify@ilmnexus.com</li>
+                        <li><i class="fas fa-phone"></i> +234 912 345 6789</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Digital Skills Hub, Lagos, Nigeria</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Ilm Nexus. All rights reserved.</p>
+                <p class="footer-motto">Learn • Create • Earn</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        // Initialize AOS (Animate On Scroll)
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
+
+        // Certificate database (in a real app, this would be fetched from a server)
+        const certificates = [
+            {
+                certificateId: "CERT-2025-ILM-001",
+                matricNo: "ILM/25/GRA/018",
+                fullName: "Airat Abdul Rahmon",
+                course: "Graphic Design",
+                grade: "Distinction",
+                status: "Valid",
+                dateIssued: "October 5, 2025",
+                imagePath: "./studentcert-image/001.jpg"
+            },
+            {
+                certificateId: "CERT-2025-ILM-002",
+                matricNo: "ILM/004/25/VIE",
+                fullName: "Yusuf Barakat Omobolanle",
+                course: "Video Editing",
+                grade: "Distinction",
+                status: "Valid",
+                dateIssued: "October 5, 2025",
+                imagePath: "./studentcert-image/002.jpg"
+            },
+            {
+                certificateId: "CERT-2025-ILM-003",
+                matricNo: "ILM/014/25/GRA",
+                fullName: "Sulyman Abdulafeez",
+                course: "Graphic Design",
+                grade: "Merit",
+                status: "Valid",
+                dateIssued: "October 5, 2025",
+                imagePath: "./studentcert-image/003.jpg"
+            },
+            {
+                certificateId: "CERT-2025-ILM-004",
+                matricNo: "ILM/002/VIE/25",
+                fullName: "Airat Abdul Rahmon",
+                course: "Video Editing",
+                grade: "Merit",
+                status: "Valid",
+                dateIssued: "October 5, 2025",
+                imagePath: "./studentcert-image/004.jpg"
+            },
+            {
+                certificateId: "CERT-2025-ILM-005",
+                matricNo: "015/ILM/GRA/25",
+                fullName: "Zainab Omowunmi Arimiyau",
+                course: "Graphic Design",
+                grade: "Credit",
+                status: "Valid",
+                dateIssued: "October 5, 2025",
+                imagePath: "./studentcert-image/005.jpg"
+            },
+            {
+                certificateId: "CERT-2025-ILM-006",
+                matricNo: "ILM/GRA016/25",
+                fullName: "Nimotallahi Odunayo Adeshile",
+                course: "Graphic Design",
+                grade: "Distinction",
+                status: "Valid",
+                dateIssued: "October 5, 2025",
+                imagePath: "./studentcert-image/006.jpg"
+            },
+            {
+                certificateId: "CERT-2025-ILM-007",
+                matricNo: "VIE/ILM/003/25",
+                fullName: "Rodiat Gbemisola Abass",
+                course: "Video Editing",
+                grade: "Credit",
+                status: "Valid",
+                dateIssued: "October 5, 2025",
+                imagePath: "./studentcert-image/007.jpg"
+            },
+            {
+                certificateId: "CERT-2025-ILM-008",
+                matricNo: "GRA/ILM/013/25",
+                fullName: "Aishat Aderanti Abdulsalam",
+                course: "Graphic Design",
+                grade: "Credit",
+                status: "Valid",
+                dateIssued: "October 5, 2025",
+                imagePath: "./studentcert-image/008.jpg"
+            }
+        ];
+
+        // DOM Elements
+        const verifyBtn = document.getElementById('verifyBtn');
+        const certificateIdInput = document.getElementById('certificateId');
+        const resultSection = document.getElementById('resultSection');
+        const resultCard = document.getElementById('resultCard');
+        const resultDetails = document.getElementById('resultDetails');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const certificatePreview = document.getElementById('certificatePreview');
+        const certificateImage = document.getElementById('certificateImage');
+        const header = document.getElementById('header');
+
+        // Carousel Elements
+        const carouselInner = document.getElementById('carouselInner');
+        const carouselDots = document.querySelectorAll('.carousel-dot');
+
+        // Store current certificate for download
+        let currentCertificate = null;
+
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Verification Function
+        verifyBtn.addEventListener('click', function() {
+            const searchValue = certificateIdInput.value.trim();
+            
+            if (!searchValue) {
+                showError("Please enter a Certificate ID or Matric Number");
+                return;
+            }
+            
+            // Find certificate in database
+            const certificate = certificates.find(cert => 
+                cert.certificateId.toLowerCase() === searchValue.toLowerCase() || 
+                cert.matricNo.toLowerCase() === searchValue.toLowerCase()
+            );
+            
+            if (certificate) {
+                showCertificate(certificate);
+                currentCertificate = certificate;
+            } else {
+                showError("Certificate Not Found. Please check the Certificate ID and try again, or contact verify@ilmnexus.com");
+                currentCertificate = null;
+            }
+        });
+
+        // Show Certificate Function
+        function showCertificate(certificate) {
+            resultCard.classList.remove('error-card');
+            resultCard.querySelector('.result-icon').innerHTML = '<i class="fas fa-check-circle"></i>';
+            resultCard.querySelector('.result-title').textContent = 'Verified Certificate';
+            
+            resultDetails.innerHTML = `
+                <div class="detail-item">
+                    <div class="detail-label">Student Name</div>
+                    <div class="detail-value">${certificate.fullName}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Course</div>
+                    <div class="detail-value">${certificate.course}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Certificate ID</div>
+                    <div class="detail-value">${certificate.certificateId}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Matric No.</div>
+                    <div class="detail-value">${certificate.matricNo}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value" style="color: var(--growth-green); font-weight: 600;">${certificate.status}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Issued on</div>
+                    <div class="detail-value">${certificate.dateIssued}</div>
+                </div>
+            `;
+            
+            resultSection.style.display = 'block';
+            resultCard.style.borderLeftColor = 'var(--growth-green)';
+            certificatePreview.style.display = 'none';
+            
+            // Show certificate preview if image exists
+            loadCertificatePreview(certificate.imagePath);
+        }
+
+        // Load certificate preview image
+        function loadCertificatePreview(imagePath) {
+            const img = new Image();
+            img.onload = function() {
+                certificateImage.src = imagePath;
+                certificatePreview.style.display = 'block';
+            };
+            img.onerror = function() {
+                console.log("Certificate image not found");
+                certificatePreview.style.display = 'none';
+            };
+            img.src = imagePath;
+        }
+
+        // Show Error Function
+        function showError(message) {
+            resultCard.classList.add('error-card');
+            resultCard.querySelector('.result-icon').innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+            resultCard.querySelector('.result-title').textContent = 'Certificate Not Found';
+            
+            resultDetails.innerHTML = `
+                <div class="detail-item">
+                    <div class="detail-value">${message}</div>
+                </div>
+            `;
+            
+            resultSection.style.display = 'block';
+            resultCard.style.borderLeftColor = '#e74c3c';
+            certificatePreview.style.display = 'none';
+            downloadBtn.style.display = 'none';
+        }
+
+        // Download Certificate Function
+        downloadBtn.addEventListener('click', function() {
+            if (!currentCertificate) {
+                alert("No certificate data available for download");
+                return;
+            }
+            
+            // Show loading spinner
+            loadingSpinner.style.display = 'block';
+            downloadBtn.disabled = true;
+            
+            // Generate PDF
+            generatePDF(currentCertificate)
+                .then(() => {
+                    loadingSpinner.style.display = 'none';
+                    downloadBtn.disabled = false;
+                })
+                .catch(error => {
+                    console.error("Error generating PDF:", error);
+                    loadingSpinner.style.display = 'none';
+                    downloadBtn.disabled = false;
+                    alert("Error generating certificate. Please try again or contact support.");
+                });
+        });
+
+        // Generate PDF function
+        async function generatePDF(certificate) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('landscape', 'mm', 'a4');
+            
+            // Add certificate image to PDF
+            try {
+                // Load the certificate image
+                const img = new Image();
+                img.crossOrigin = "Anonymous";
+                
+                return new Promise((resolve, reject) => {
+                    img.onload = function() {
+                        try {
+                            // Calculate dimensions to fit the page
+                            const pageWidth = doc.internal.pageSize.getWidth();
+                            const pageHeight = doc.internal.pageSize.getHeight();
+                            
+                            // Add the image to cover the entire page
+                            doc.addImage(img, 'JPEG', 0, 0, pageWidth, pageHeight);
+                            
+                            // Generate filename
+                            const fileName = `IlmNexus_${certificate.course.replace(/\s+/g, '_')}_Certificate_${certificate.fullName.replace(/\s+/g, '_')}_2025.pdf`;
+                            
+                            // Save the PDF
+                            doc.save(fileName);
+                            resolve();
+                        } catch (error) {
+                            reject(error);
+                        }
+                    };
+                    
+                    img.onerror = function() {
+                        reject(new Error("Failed to load certificate image"));
+                    };
+                    
+                    img.src = certificate.imagePath;
+                });
+            } catch (error) {
+                throw new Error("Error generating PDF: " + error.message);
+            }
+        }
+
+        // Carousel Functionality
+        let currentSlide = 0;
+        
+        function showSlide(index) {
+            if (index < 0) index = carouselDots.length - 1;
+            if (index >= carouselDots.length) index = 0;
+            
+            currentSlide = index;
+            carouselInner.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            // Update dots
+            carouselDots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        }
+        
+        // Add click events to dots
+        carouselDots.forEach(dot => {
+            dot.addEventListener('click', function() {
+                const index = parseInt(this.getAttribute('data-index'));
+                showSlide(index);
+            });
+        });
+        
+        // Auto-advance carousel
+        setInterval(() => {
+            showSlide(currentSlide + 1);
+        }, 5000);
+
+        // Allow Enter key to trigger verification
+        certificateIdInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                verifyBtn.click();
+            }
+        });
+
+        // Mobile menu functionality
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const nav = document.querySelector('nav');
+        
+        mobileMenuBtn.addEventListener('click', function() {
+            nav.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
